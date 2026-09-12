@@ -53,5 +53,3 @@ O projeto estará acessível em `http://localhost:5173` (ou no endereço indicad
 * `npm run build`: Compila o TypeScript e gera a build de produção na pasta `dist`.
 * `npm run preview`: Executa visualização local da build de produção.
 * `npm run lint`: Executa a verificação de código com ESLint.
-
-```
