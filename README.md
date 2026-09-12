@@ -1,69 +1,57 @@
-# React + TypeScript + Vite
+# 🛒 ProgWeb - Front-end
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web para a aplicação desenvolvida para a disciplina de Programação Web. A aplicação consome uma API REST construída em Spring Boot.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tecnologias Utilizadas
 
-## Expanding the ESLint configuration
+- **React 19** + **TypeScript**
+- **Vite** (Build tool e dev server)
+- **React Router DOM v7** (Roteamento)
+- **Framer Motion** & **FontAwesome** (UI / Animações e Ícones)
+- **Chart.js / React-ChartJS-2** (Visualização de dados)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Como Executar o Projeto
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Pré-requisitos
+- **Node.js** (versão 18 ou superior)
+- **npm** ou **yarn**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Passo a passo
+
+1. **Clonar o repositório:**
+   ```bash
+   git clone https://github.com/enzovalencuela/progweb-front/
+   cd progweb-front
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Instalar as dependências:**
+```bash
+npm install
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+3. **Iniciar o servidor de desenvolvimento:**
+```bash
+npm run dev
+
+```
+
+
+O projeto estará acessível em `http://localhost:5173` (ou no endereço indicado no terminal).
+
+---
+
+## 📜 Scripts Disponíveis
+
+* `npm run dev`: Executa a aplicação em modo de desenvolvimento com Vite.
+* `npm run build`: Compila o TypeScript e gera a build de produção na pasta `dist`.
+* `npm run preview`: Executa visualização local da build de produção.
+* `npm run lint`: Executa a verificação de código com ESLint.
+
 ```
