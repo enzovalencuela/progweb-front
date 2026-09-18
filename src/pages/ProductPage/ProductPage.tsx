@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -16,7 +15,8 @@ import SpanMessage from "../../components/SpanMessage/SpanMessage";
 import Loading from "../../components/Loading/Loading";
 import type { Product } from "../../types/Product";
 import { useProduct } from "../../contexts/ProductContext";
-import { fetchProductByIdCached } from "../../utils/productCache";
+//import { fetchProductByIdCached } from "../../utils/productCache";
+import { mockProducts } from "../../mocks/products";
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,8 +40,9 @@ const ProductPage: React.FC = () => {
           throw new Error("Produto inválido.");
         }
 
-        const data = await fetchProductByIdCached(VITE_BACKEND_URL, Number(id));
-        setProduct(data);
+        const data = mockProducts.find((p) => p.id === Number(id));
+        //const data = await fetchProductByIdCached(VITE_BACKEND_URL, Number(id));
+        setProduct(data ?? null);
       } catch (err) {
         console.error("Erro ao buscar produto:", err);
         setError("Não foi possível carregar o produto. Tente novamente.");
@@ -55,7 +56,7 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     setIsAddedToCart(
-      product ? cart.some((item) => item.id === product.id) : false
+      product ? cart.some((item) => item.id === product.id) : false,
     );
   }, [cart, product]);
 

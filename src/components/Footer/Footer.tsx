@@ -18,32 +18,16 @@ function Footer() {
               <img src="/LOGO_MARCA.png" alt="" />
             </div>
             <div className="social-media">
-              <a
-                href="https://enzovalencuela-meu-portifolio.netlify.app"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="" target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faCircleUser} />
               </a>
-              <a
-                href="https://www.instagram.com/_enzovalencuela"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="" target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
-              <a
-                href="https://github.com/enzovalencuela"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="" target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faGithub} />
               </a>
-              <a
-                href="https://www.linkedin.com/in/enzo-silva10"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="" target="_blank" rel="noreferrer">
                 <FontAwesomeIcon icon={faLinkedin} />
               </a>
             </div>
@@ -69,7 +53,7 @@ function Footer() {
               <b>Telefone:</b> (67) 99846-8831
             </p>
             <p>
-              <b>E-mail:</b> esilvavalencuela@gmail.com
+              <b>E-mail:</b> ecommerce@example.com
             </p>
             <p>
               <b>Horário de atendimento:</b>

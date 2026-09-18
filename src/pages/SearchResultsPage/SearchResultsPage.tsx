@@ -6,16 +6,16 @@ import type { Product } from "../../types/Product";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import Loading from "../../components/Loading/Loading";
 import MenuSearchSort from "../../components/MenuSearchSort/MenuSearchSort";
-import {
-  fetchProductsWithCache,
-  filterCachedProducts,
-} from "../../utils/productCache";
+import {} from //fetchProductsWithCache,
+// filterCachedProducts,
+"../../utils/productCache";
 import {
   getCollectionProducts,
   getCollectionTitle,
   type ProductCategory,
   type ProductCollectionType,
 } from "../../utils/productCollections";
+import { mockProducts } from "../../mocks/products";
 
 const SearchResultsPage: React.FC = () => {
   const [results, setResults] = useState<Product[]>([]);
@@ -40,10 +40,10 @@ const SearchResultsPage: React.FC = () => {
           categoria: (category || undefined) as ProductCategory | undefined,
           tipoSessao: session || undefined,
           titulo: query || undefined,
-        })
+        }),
     );
 
-    const fetchResults = async () => {
+    /*const fetchResults = async () => {
       setLoading(true);
       try {
         const { products } = await fetchProductsWithCache(VITE_BACKEND_URL);
@@ -54,17 +54,63 @@ const SearchResultsPage: React.FC = () => {
               products,
               tipoSessao: session,
               titulo: title || undefined,
-            })
+            }),
           );
         } else if (category) {
           setResults(
             getCollectionProducts({
               products,
               categoria: category as ProductCategory,
-            })
+            }),
           );
         } else {
           setResults(filterCachedProducts(query, category));
+        }
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };  */
+
+    const fetchResults = async () => {
+      setLoading(true);
+      try {
+        const products = mockProducts;
+
+        if (session) {
+          setResults(
+            getCollectionProducts({
+              products,
+              tipoSessao: session,
+              titulo: title || undefined,
+            }),
+          );
+        } else if (category) {
+          setResults(
+            getCollectionProducts({
+              products,
+              categoria: category as ProductCategory,
+            }),
+          );
+        } else {
+          const filtered = products.filter((p) => {
+            const searchTerm = query.toLowerCase().trim();
+            if (!searchTerm) return true;
+
+            const matchesTitle = p.titulo?.toLowerCase().includes(searchTerm);
+            const matchesCategory = p.categoria
+              ?.toLowerCase()
+              .includes(searchTerm);
+            const matchesTags = p.tags?.some((tag) =>
+              tag.toLowerCase().includes(searchTerm),
+            );
+
+            return matchesTitle || matchesCategory || matchesTags;
+          });
+
+          setResults(filtered);
         }
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
