@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import type { Product } from "../../types/Product";
 import Loading from "../Loading/Loading";
-import { fetchProductsWithCache } from "../../utils/productCache";
+//import { fetchProductsWithCache } from "../../utils/productCache";
 import ProductCarousel from "../ProductCarousel/ProductCarousel";
 import {
   getCollectionProducts,
@@ -11,8 +11,9 @@ import {
   type ProductCategory,
   type ProductCollectionType,
 } from "../../utils/productCollections";
+import { mockProducts } from "../../mocks/products";
 
-const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+//const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const SECTION_PREVIEW_LIMIT = 15;
 
 interface ProdutosProps {
@@ -34,12 +35,13 @@ const Produtos: React.FC<ProdutosProps> = ({
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { products } = await fetchProductsWithCache(VITE_BACKEND_URL);
+        const products = mockProducts;
+        // const { products } = await fetchProductsWithCache(VITE_BACKEND_URL);
         setAllProducts(products);
       } catch (err) {
         console.error("Erro ao buscar produtos:", err);
         setError(
-          "Não foi possível carregar os produtos. Tente novamente mais tarde."
+          "Não foi possível carregar os produtos. Tente novamente mais tarde.",
         );
       } finally {
         setLoading(false);
@@ -69,7 +71,7 @@ const Produtos: React.FC<ProdutosProps> = ({
   const handleViewMore = () => {
     if (tipoSessao) {
       navigate(
-        `/produtos/search?sessao=${tipoSessao}&titulo=${encodeURIComponent(sectionTitle)}`
+        `/produtos/search?sessao=${tipoSessao}&titulo=${encodeURIComponent(sectionTitle)}`,
       );
       return;
     }
