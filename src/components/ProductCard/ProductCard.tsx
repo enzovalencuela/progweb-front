@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ShoppingBag, Sparkles, Tag } from "lucide-react";
+import { ShoppingBag, Sparkles, Tag } from "lucide-react";
 import type { Product } from "../../types/Product";
 import { useAuth } from "../../contexts/AuthContext";
 import SpanMessage from "../SpanMessage/SpanMessage";
@@ -82,7 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
           width={640}
           height={672}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-          className="max-h-full w-full object-contain transition duration-300 group-hover:scale-105"
+          className="max-h-full w-full object-cover transition duration-300 group-hover:scale-105"
         />
       </Link>
 
@@ -91,7 +91,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
             {product.categoria}
           </p>
-          <h3 className="line-clamp-2 min-h-[2.5rem] text-[15px] font-semibold leading-snug text-slate-950 sm:min-h-[3rem] sm:text-[1.05rem] sm:leading-tight">
+          <h3 className="line-clamp-2 min-h-[2.5rem] text-[14px] font-semibold leading-snug text-slate-950 sm:min-h-[3rem] sm:text-[1rem] sm:leading-tight">
             {product.titulo}
           </h3>
           <div className="min-h-[4.25rem] space-y-0.5 sm:min-h-[4.85rem]">
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
                 R$ {product.preco_original}
               </p>
             )}
-            <h4 className="text-[18px] font-extrabold tracking-tight text-slate-950 sm:text-[2rem]">
+            <h4 className="text-[16px] font-extrabold tracking-tight text-slate-950 sm:text-[20px]">
               R$ {product.preco}
             </h4>
             <span className="block text-[11px] leading-4 text-slate-500 sm:text-sm sm:leading-5">
@@ -115,9 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
         <div className="mt-auto flex items-center gap-1.5 sm:gap-2">
           <motion.button
             onClick={() =>
-              isProductInCart
-                ? navigate("/carrinho")
-                : handleAddToCart(product)
+              isProductInCart ? navigate("/carrinho") : handleAddToCart(product)
             }
             className={`flex min-h-10 flex-1 items-center justify-center rounded-full px-2.5 py-2 text-[13px] font-semibold transition active:scale-[0.98] sm:min-h-10 sm:px-3.5 sm:py-2.5 sm:text-sm ${
               isProductInCart
@@ -133,13 +131,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
               </span>
             </span>
           </motion.button>
-
-          <Link
-            to={`/product/${product.id}`}
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-full border border-slate-200 p-2 text-secondary transition hover:border-secondary/30 hover:text-secondary active:scale-[0.98] sm:min-h-10 sm:min-w-10 sm:p-2.5"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
       </div>
     </div>
