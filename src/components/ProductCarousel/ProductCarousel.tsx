@@ -32,10 +32,8 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
       )}
       <Swiper
         grabCursor
-        loop={true}
         initialSlide={2}
         speed={800}
-        slideToClickedSlide
         breakpoints={{
           0: { slidesPerView: 2, spaceBetween: 10 },
           660: { slidesPerView: 3 },
