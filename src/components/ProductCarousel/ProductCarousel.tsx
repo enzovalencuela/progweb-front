@@ -38,8 +38,9 @@ const ProductCarousel: React.FC<ProductCarouselProps> = ({
         slideToClickedSlide
         breakpoints={{
           0: { slidesPerView: 2, spaceBetween: 10 },
-          660: { slidesPerView: 4 },
-          950: { slidesPerView: 5 },
+          660: { slidesPerView: 3 },
+          860: { slidesPerView: 4 },
+          1160: { slidesPerView: 5 },
           1290: { slidesPerView: 6 },
         }}
         spaceBetween={10}
