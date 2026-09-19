@@ -91,7 +91,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
             {product.categoria}
           </p>
-          <h3 className="line-clamp-2 min-h-[2.5rem] text-[14px] font-semibold leading-snug text-slate-950 sm:min-h-[3rem] sm:text-[1rem] sm:leading-tight">
+          <h3 className="line-clamp-2 overflow-hidden text-[14px] font-semibold leading-snug text-slate-950 sm:text-[1rem] sm:leading-tight">
             {product.titulo}
           </h3>
           <div className="min-h-[4.25rem] space-y-0.5 sm:min-h-[4.85rem]">
