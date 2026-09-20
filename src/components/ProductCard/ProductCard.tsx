@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
     : sectionTitle === "Novidades";
 
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-slate-200/80 bg-white p-2.5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl select-none sm:rounded-[24px] sm:p-3">
+    <div className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-slate-200/80 bg-white p-2.5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl select-none sm:rounded-[24px] sm:p-3">
       {showSpanOkMessage && (
         <SpanMessage message="Produto adicionado ao carrinho!" status="ok" />
       )}
