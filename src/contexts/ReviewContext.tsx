@@ -1,0 +1,125 @@
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useContext, useState, useCallback } from "react";
+
+export interface Review {
+  id: number;
+  productId: number;
+  userName: string;
+  rating: number;
+  comment: string;
+  imageUrl?: string;
+  verifiedPurchase: boolean;
+  createdAt: string;
+}
+
+interface ReviewSummary {
+  average: number;
+  count: number;
+}
+
+interface ReviewContextType {
+  reviewsCache: Record<number, Review[]>;
+  summaryCache: Record<number, ReviewSummary>;
+  fetchReviewsByProduct: (productId: number) => Promise<Review[]>;
+  addReview: (reviewData: Omit<Review, "id" | "createdAt">) => Promise<boolean>;
+  getReviewSummary: (productId: number) => ReviewSummary;
+}
+
+const ReviewContext = createContext<ReviewContextType | undefined>(undefined);
+
+export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [reviewsCache, setReviewsCache] = useState<Record<number, Review[]>>(
+    {},
+  );
+  const [summaryCache, setSummaryCache] = useState<
+    Record<number, ReviewSummary>
+  >({});
+  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+  const updateSummary = (productId: number, reviews: Review[]) => {
+    const count = reviews.length;
+    const average =
+      count > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / count : 0;
+
+    setSummaryCache((prev) => ({
+      ...prev,
+      [productId]: { average, count },
+    }));
+  };
+
+  const fetchReviewsByProduct = useCallback(
+    async (productId: number): Promise<Review[]> => {
+      try {
+        const response = await fetch(
+          `${VITE_BACKEND_URL}/api/reviews/product/${productId}`,
+        );
+        if (response.ok) {
+          const data: Review[] = await response.json();
+          setReviewsCache((prev) => ({ ...prev, [productId]: data }));
+          updateSummary(productId, data);
+          return data;
+        }
+      } catch (err) {
+        console.error("Erro ao buscar avaliações:", err);
+      }
+      return [];
+    },
+    [VITE_BACKEND_URL],
+  );
+
+  const addReview = async (
+    reviewData: Omit<Review, "id" | "createdAt">,
+  ): Promise<boolean> => {
+    try {
+      const response = await fetch(`${VITE_BACKEND_URL}/api/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (response.ok) {
+        const savedReview: Review = await response.json();
+        const currentList = reviewsCache[reviewData.productId] || [];
+        const updatedList = [savedReview, ...currentList];
+
+        setReviewsCache((prev) => ({
+          ...prev,
+          [reviewData.productId]: updatedList,
+        }));
+        updateSummary(reviewData.productId, updatedList);
+        return true;
+      }
+    } catch (err) {
+      console.error("Erro ao enviar avaliação:", err);
+    }
+    return false;
+  };
+
+  const getReviewSummary = (productId: number): ReviewSummary => {
+    return summaryCache[productId] || { average: 0, count: 0 };
+  };
+
+  return (
+    <ReviewContext.Provider
+      value={{
+        reviewsCache,
+        summaryCache,
+        fetchReviewsByProduct,
+        addReview,
+        getReviewSummary,
+      }}
+    >
+      {children}
+    </ReviewContext.Provider>
+  );
+};
+
+export const useReview = () => {
+  const context = useContext(ReviewContext);
+  if (!context) {
+    throw new Error("useReview deve ser usado dentro de um ReviewProvider");
+  }
+  return context;
+};

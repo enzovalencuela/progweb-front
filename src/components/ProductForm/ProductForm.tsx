@@ -10,7 +10,7 @@ interface ProductFormProps {
     product: Omit<
       Product,
       "id" | "desconto" | "avaliacoes" | "mediaAvaliacao" | "tamanhos"
-    >
+    >,
   ) => void;
   onCancel: () => void;
 }
@@ -24,6 +24,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     "Áudio",
     "Periféricos",
     "Consoles",
+    "Hardware",
     "Realidade VR",
     "Acessórios",
     "Notebooks",
@@ -43,6 +44,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     tags: "",
     cores: "",
     disponivel: true,
+    estoque: 0,
   });
 
   useEffect(() => {
@@ -59,6 +61,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         tags: product.tags?.join(", ") || "",
         cores: product.cores?.join(", ") || "",
         disponivel: product.disponivel,
+        estoque: product.estoque || 0,
       });
     }
   }, [product]);
@@ -66,7 +69,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const isCheckbox = type === "checkbox";
@@ -111,6 +114,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
       tags: formData.tags.split(",").map((tag) => tag.trim()),
       cores: formData.cores.split(",").map((cor) => cor.trim()),
       disponivel: formData.disponivel,
+      estoque: formData.estoque,
     };
 
     onSave(newProduct);
@@ -130,6 +134,21 @@ const ProductForm: React.FC<ProductFormProps> = ({
           />
           {formData.titulo && (
             <button type="button" onClick={() => handleClear("titulo")}>
+              X
+            </button>
+          )}
+        </label>
+        <label>
+          Estoque:
+          <input
+            type="number"
+            name="estoque"
+            value={formData.estoque}
+            onChange={handleChange}
+            required
+          />
+          {formData.estoque && (
+            <button type="button" onClick={() => handleClear("estoque")}>
               X
             </button>
           )}

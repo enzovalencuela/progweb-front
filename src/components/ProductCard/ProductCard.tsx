@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingBag, Sparkles, Tag } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 import type { Product } from "../../types/Product";
 import { useAuth } from "../../contexts/AuthContext";
+import { useReview } from "../../contexts/ReviewContext";
 import SpanMessage from "../SpanMessage/SpanMessage";
 
 interface ProductCardProps {
@@ -12,17 +15,24 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
-  const [showSpanOkMessage, setShowSpanOkMessage] = useState(false);
-  const [showSpanErrorMessage, setShowSpanErrorMessage] = useState(false);
+  const [showSpanOkMessage, setShowSpanOkMessage] = React.useState(false);
+  const [showSpanErrorMessage, setShowSpanErrorMessage] = React.useState(false);
   const navigate = useNavigate();
   const { user, addToCart, cart } = useAuth();
+  const { getReviewSummary, fetchReviewsByProduct } = useReview();
 
   const isProductInCart = cart.some((item) => item.id === product.id);
+  const summary = getReviewSummary(product.id);
+
+  useEffect(() => {
+    // Busca as avaliações do produto para preencher a nota no card caso ainda não esteja em cache
+    if (summary.count === 0) {
+      fetchReviewsByProduct(product.id);
+    }
+  }, [product.id, fetchReviewsByProduct, summary.count]);
 
   const handleAddToCart = async (selectedProduct: Product) => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     const status = await addToCart(selectedProduct);
     if (status === "error") {
@@ -79,21 +89,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
           loading="lazy"
           decoding="async"
           draggable={false}
-          width={640}
-          height={672}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
           className="max-h-full w-full object-cover transition duration-300 group-hover:scale-105"
         />
       </Link>
 
       <div className="flex flex-1 flex-col pt-2.5 sm:pt-3.5">
         <div className="mb-2 space-y-1 sm:mb-3 sm:space-y-1.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
-            {product.categoria}
-          </p>
+          <div className="flex items-center justify-between gap-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
+              {product.categoria}
+            </p>
+            {summary.average > 0 && (
+              <div className="flex items-center gap-1 text-slate-700">
+                <span className="text-[11px] font-bold sm:text-xs">
+                  {summary.average.toFixed(1)}
+                </span>
+                <FontAwesomeIcon
+                  icon={faStar}
+                  className="h-3 w-3 text-amber-400 sm:h-3.5 sm:w-3.5"
+                />
+              </div>
+            )}
+          </div>
+
           <h3 className="line-clamp-2 overflow-hidden text-[14px] font-semibold leading-snug text-slate-950 sm:text-[1rem] sm:leading-tight">
             {product.titulo}
           </h3>
+
           <div className="min-h-[4.25rem] space-y-0.5 sm:min-h-[4.85rem]">
             {product.preco_original && (
               <p className="text-[11px] text-slate-400 line-through sm:text-sm">
