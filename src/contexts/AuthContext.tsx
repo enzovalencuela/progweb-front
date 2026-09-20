@@ -30,6 +30,7 @@ interface AuthContextType {
   user: UserData | null | undefined;
   cart: Product[];
   login: (userData: User) => void;
+  googleLogin: (user: any) => Promise<boolean>;
   logout: () => Promise<void>;
   addToCart: (item: Product) => Promise<"ok" | "error">;
   removeFromCart: (itemId: number) => Promise<void>;
@@ -208,6 +209,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const syncedData = await syncUserToFirestore(firebaseUser, backendData);
     const combinedUser: UserData = { ...firebaseUser, ...syncedData };
     setUser(combinedUser);
+  };
+
+  const googleLogin = async (firebaseUser: any): Promise<boolean> => {
+    try {
+      const firebaseIdToken = await firebaseUser.getIdToken();
+
+      const response = await fetch(`${VITE_BACKEND_URL}/api/google-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firebaseToken: firebaseIdToken,
+          name: firebaseUser.displayName,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        console.error("Erro na resposta do backend:", response.status);
+        return false;
+      }
+
+      const data = await response.json();
+
+      if (data.user) {
+        login(data.user);
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Erro ao autenticar via Google (Firebase/Backend):", error);
+      return false;
+    }
   };
 
   const logout = async () => {
@@ -398,6 +432,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       user,
       cart,
       login,
+      googleLogin,
       logout,
       addToCart,
       removeFromCart,

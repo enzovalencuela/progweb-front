@@ -4,11 +4,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthFormLayout from "../../components/AuthFormLayout/AuthFormLayout";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import Button from "../../components/Button/Button";
 import Loading from "../../components/Loading/Loading";
 import { useAuth } from "../../contexts/AuthContext";
+import GoogleLoginButton from "../../components/ButtonGoogle/ButtonGoogle";
 
 const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -18,7 +23,7 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -29,7 +34,7 @@ const Register: React.FC = () => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -63,6 +68,32 @@ const Register: React.FC = () => {
       } else {
         setError("Erro ao cadastrar. Tente novamente.");
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    if (loading) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      const success = await googleLogin(firebaseUser);
+
+      if (success) {
+        navigate("/");
+      } else {
+        setError("Erro ao autenticar via Google no servidor.");
+      }
+    } catch (error: any) {
+      console.error("Erro durante o processo de login com Google:", error);
+      setError("Falha ao realizar login com o Google. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -113,6 +144,7 @@ const Register: React.FC = () => {
         {error && <p className="error-message">{error}</p>}
         <Button child="Cadastrar" />
       </form>
+      <GoogleLoginButton onSuccess={handleGoogleLogin} />
     </AuthFormLayout>
   );
 };

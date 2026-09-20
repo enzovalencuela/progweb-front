@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import Button from "../../components/Button/Button";
 import GoogleLoginButton from "../../components/ButtonGoogle/ButtonGoogle";
 import AuthFormLayout from "../../components/AuthFormLayout/AuthFormLayout";
@@ -13,7 +18,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
 
   let authInstance: any;
   try {
@@ -79,34 +84,27 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async (user: any) => {
-    if (isLoading || !user) return;
+  const handleGoogleLogin = async () => {
+    if (isLoading) return;
+
     setIsLoading(true);
+    setError("");
+
     try {
-      const firebaseIdToken = await user.getIdToken();
-      // Agora basta chamar /google-login: o backend irá criar session cookie seguro!
-      const response = await fetch(`${VITE_BACKEND_URL}/api/google-login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firebaseToken: firebaseIdToken,
-          name: user.displayName,
-        }),
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        login(data.user);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      const success = await googleLogin(firebaseUser);
+
+      if (success) {
         navigate("/");
       } else {
-        setError("Erro ao autenticar via Google no backend.");
+        setError("Erro ao autenticar via Google no servidor.");
       }
-    } catch (error) {
-      setError("Erro de conexão ao sincronizar com o servidor.");
-      console.error(
-        "Erro ao fazer login com Google (Firebase ou backend)",
-        error,
-      );
+    } catch (error: any) {
+      console.error("Erro durante o processo de login com Google:", error);
+      setError("Falha ao realizar login com o Google. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
