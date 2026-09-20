@@ -1,30 +1,42 @@
 .span-message-container {
   position: fixed;
-  bottom: 2%;
-  left: 2%;
-  padding: 10px 2px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  min-height: 20px;
+  bottom: 24px;
+  left: 24px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.2),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  width: auto;
+  max-width: 360px;
   text-align: center;
-  position: fixed;
-  bottom: 2px;
-  left: 2px;
-  z-index: 10;
+  z-index: 99999;
+  pointer-events: none;
+  animation: slideUp 0.3s ease-out;
 }
 
 .span-message-text {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #ffffff;
+  margin: 0;
 }
 
 .ok {
-  background-color: #34c01c;
+  background-color: #05ae08;
 }
 
 .error {
-  background-color: #ca1616;
+  background-color: #dc2626;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

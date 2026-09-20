@@ -1,6 +1,7 @@
-// src/components/SpanMessage.tsx
+// src/components/SpanMessage/SpanMessage.tsx
 
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import "./SpanMessage.css";
 
 interface SpanMessageProps {
@@ -14,19 +15,20 @@ const SpanMessage: React.FC<SpanMessageProps> = ({ message, status }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSpanMessage(false);
-    }, 3000);
+    }, 4000);
 
     return () => {
       clearTimeout(timer);
     };
   }, []);
 
-  return (
-    showSpanMessage && (
-      <div className={`span-message-container ${status}`}>
-        <p className="span-message-text">{message}</p>
-      </div>
-    )
+  if (!showSpanMessage) return null;
+
+  return createPortal(
+    <div className={`span-message-container ${status}`}>
+      <p className="span-message-text">{message}</p>
+    </div>,
+    document.body,
   );
 };
 
