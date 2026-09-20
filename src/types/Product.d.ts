@@ -10,9 +10,10 @@ export interface Product {
   categoria: string;
   tags?: string[];
   cores?: string[];
-  avaliacoes?: number;
-  mediaAvaliacao?: number;
-  salesCount?: number;
+  peso_kg?: number;
+  largura_cm?: number;
+  comprimento_cm?: number;
+  estoque: number;
   createdAt?: string;
   disponivel: boolean;
 }

@@ -6,9 +6,10 @@ import type { Product } from "../../types/Product";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import Loading from "../../components/Loading/Loading";
 import MenuSearchSort from "../../components/MenuSearchSort/MenuSearchSort";
-import {} from //fetchProductsWithCache,
-// filterCachedProducts,
-"../../utils/productCache";
+import {
+  fetchProductsWithCache,
+  filterCachedProducts,
+} from "../../utils/productCache";
 import {
   getCollectionProducts,
   getCollectionTitle,
@@ -43,10 +44,11 @@ const SearchResultsPage: React.FC = () => {
         }),
     );
 
-    /*const fetchResults = async () => {
+    const fetchResults = async () => {
       setLoading(true);
       try {
-        const { products } = await fetchProductsWithCache(VITE_BACKEND_URL);
+        const { products } =
+          (await fetchProductsWithCache(VITE_BACKEND_URL)) || mockProducts;
 
         if (session) {
           setResults(
@@ -65,52 +67,6 @@ const SearchResultsPage: React.FC = () => {
           );
         } else {
           setResults(filterCachedProducts(query, category));
-        }
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };  */
-
-    const fetchResults = async () => {
-      setLoading(true);
-      try {
-        const products = mockProducts;
-
-        if (session) {
-          setResults(
-            getCollectionProducts({
-              products,
-              tipoSessao: session,
-              titulo: title || undefined,
-            }),
-          );
-        } else if (category) {
-          setResults(
-            getCollectionProducts({
-              products,
-              categoria: category as ProductCategory,
-            }),
-          );
-        } else {
-          const filtered = products.filter((p) => {
-            const searchTerm = query.toLowerCase().trim();
-            if (!searchTerm) return true;
-
-            const matchesTitle = p.titulo?.toLowerCase().includes(searchTerm);
-            const matchesCategory = p.categoria
-              ?.toLowerCase()
-              .includes(searchTerm);
-            const matchesTags = p.tags?.some((tag) =>
-              tag.toLowerCase().includes(searchTerm),
-            );
-
-            return matchesTitle || matchesCategory || matchesTags;
-          });
-
-          setResults(filtered);
         }
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
