@@ -7,6 +7,7 @@ export type ProductCategory =
   | "Consoles"
   | "Acessórios"
   | "Monitores"
+  | "Hardware"
   | "Realidade VR"
   | "Áudio";
 
@@ -31,7 +32,7 @@ export function getCollectionTitle({
 
   if (tipoSessao === "maisVendidos") return "Mais Vendidos";
   if (tipoSessao === "emPromocao") return "Em Promoção";
-  if (tipoSessao === "recomendados") return "Recomendados";
+  if (tipoSessao === "recomendados") return "Recomendados para Você";
 
   return categoria || "Produtos";
 }
@@ -44,18 +45,20 @@ export function getCollectionProducts({
   if (tipoSessao) {
     switch (tipoSessao) {
       case "maisVendidos":
-        return [...products].sort(
-          (a, b) => (b.salesCount || 0) - (a.salesCount || 0)
-        );
+        return [...products].sort((a, b) => b.id - a.id);
+
       case "emPromocao":
-        return products.filter((product) => product.preco !== product.preco_original);
-      case "recomendados": {
-        const recommended = products.filter(
+        return products.filter(
           (product) =>
-            (product.avaliacoes || 0) > 1 && (product.mediaAvaliacao || 0) >= 4
+            Boolean(product.preco_original) &&
+            Number(product.preco_original) > product.preco,
         );
+
+      case "recomendados": {
+        const recommended = products.filter((product) => product.disponivel);
         return recommended.length > 0 ? recommended : products;
       }
+
       default:
         return products;
     }

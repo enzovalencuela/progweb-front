@@ -49,8 +49,6 @@ function MenuSearchSort({
           newResults.sort((a, b) => b.preco - a.preco);
         }
         setIsAscending(!isAscending);
-      } else if (sortBy === "Pedidos") {
-        newResults.sort((a, b) => (b.salesCount || 0) - (a.salesCount || 0));
       }
 
       setResults(newResults);

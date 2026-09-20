@@ -41,11 +41,6 @@ const Dashboard: React.FC = () => {
     (accumulator, product) => accumulator + Number(product.preco || 0),
     0
   );
-  const monthlySales = availableProducts.slice(0, 6).reduce(
-    (accumulator, product) =>
-      accumulator + Number(product.salesCount || 0) * Number(product.preco),
-    0
-  );
   const stats = [
     {
       title: "Saldo Total",
@@ -55,7 +50,6 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Vendas do Mês",
-      value: formatCurrency(monthlySales),
       description: "Estimativa com base nos itens mais relevantes",
       icon: CreditCard,
     },
