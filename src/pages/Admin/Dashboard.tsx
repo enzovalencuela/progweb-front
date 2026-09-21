@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="grid gap-6 px-4 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
+    <div className="grid gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
       {/* SIDEBAR DE NAVEGAÇÃO */}
       <aside className="h-fit rounded-[32px] border border-slate-200 bg-white p-6 shadow-soft">
         <div className="mb-8">

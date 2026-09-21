@@ -14,6 +14,12 @@ export interface Review {
   createdAt: string;
 }
 
+export interface ReviewEligibility {
+  canReview: boolean;
+  hasPurchased: boolean;
+  hasAlreadyReviewed: boolean;
+}
+
 interface ReviewSummary {
   average: number;
   count: number;
@@ -24,6 +30,10 @@ interface ReviewContextType {
   summaryCache: Record<number, ReviewSummary>;
   fetchReviewsByProduct: (productId: number) => Promise<Review[]>;
   addReview: (reviewData: Omit<Review, "id" | "createdAt">) => Promise<boolean>;
+  checkEligibility: (
+    userId: number,
+    productId: number,
+  ) => Promise<ReviewEligibility>;
   getReviewSummary: (productId: number) => ReviewSummary;
 }
 
@@ -77,6 +87,32 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({
     [VITE_BACKEND_URL],
   );
 
+  const checkEligibility = useCallback(
+    async (userId: number, productId: number): Promise<ReviewEligibility> => {
+      try {
+        const response = await fetch(
+          `${VITE_BACKEND_URL}/api/reviews/eligibility?userId=${userId}&productId=${productId}`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          return {
+            canReview: Boolean(data.eligible),
+            hasPurchased: Boolean(data.hasApprovedPayment),
+            hasAlreadyReviewed: Boolean(data.alreadyReviewed),
+          };
+        }
+      } catch (err) {
+        console.error("Erro ao checar elegibilidade da avaliação:", err);
+      }
+      return {
+        canReview: false,
+        hasPurchased: false,
+        hasAlreadyReviewed: false,
+      };
+    },
+    [VITE_BACKEND_URL],
+  );
+
   const addReview = async (
     reviewData: Omit<Review, "id" | "createdAt">,
   ): Promise<boolean> => {
@@ -116,6 +152,7 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({
         summaryCache,
         fetchReviewsByProduct,
         addReview,
+        checkEligibility,
         getReviewSummary,
       }}
     >

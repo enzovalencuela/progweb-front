@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 mb-6 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
       <TopBar />
       <div className="mx-auto max-w-[1440px] px-4 py-3 sm:px-6 lg:px-8">
         <MainNavbar />
