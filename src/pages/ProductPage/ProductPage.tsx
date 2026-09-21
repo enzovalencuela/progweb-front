@@ -31,6 +31,12 @@ const ProductPage: React.FC = () => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  // Estados de elegibilidade para avaliação
+  const [canReview, setCanReview] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [hasAlreadyReviewed, setHasAlreadyReviewed] = useState(false);
+  const [loadingEligibility, setLoadingEligibility] = useState(false);
+
   // Modal Image state
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -40,7 +46,7 @@ const ProductPage: React.FC = () => {
   const [hoverRating, setHoverRating] = useState(0);
 
   const { user, cart, addToCart } = useAuth();
-  const { fetchReviewsByProduct, addReview } = useReview();
+  const { checkEligibility, fetchReviewsByProduct, addReview } = useReview();
   const navigate = useNavigate();
 
   const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -62,6 +68,30 @@ const ProductPage: React.FC = () => {
     };
     fetchProduct();
   }, [id, VITE_BACKEND_URL]);
+
+  // Consulta elegibilidade no backend via ReviewContext
+  useEffect(() => {
+    const verifyPermissions = async () => {
+      if (user?.id && id) {
+        setLoadingEligibility(true);
+        try {
+          const eligibility = await checkEligibility(
+            Number(user.id),
+            Number(id),
+          );
+          setCanReview(eligibility.canReview);
+          setHasPurchased(eligibility.hasPurchased);
+          setHasAlreadyReviewed(eligibility.hasAlreadyReviewed);
+        } catch (err) {
+          console.error("Erro ao verificar permissões de avaliação:", err);
+        } finally {
+          setLoadingEligibility(false);
+        }
+      }
+    };
+
+    verifyPermissions();
+  }, [user?.id, id, checkEligibility]);
 
   useEffect(() => {
     if (id) {
@@ -107,6 +137,14 @@ const ProductPage: React.FC = () => {
       setImagePreview(null);
       setShowReviewForm(false);
       setsShowOkMessage(true);
+
+      // Reavalia a elegibilidade após salvar a nova avaliação
+      if (user?.id) {
+        const eligibility = await checkEligibility(Number(user.id), product.id);
+        setCanReview(eligibility.canReview);
+        setHasPurchased(eligibility.hasPurchased);
+        setHasAlreadyReviewed(eligibility.hasAlreadyReviewed);
+      }
     } else {
       setsShowErrorMessage(true);
     }
@@ -144,7 +182,7 @@ const ProductPage: React.FC = () => {
     (product.preco / product.max_parcelas) * (1 + product.taxa_parcela / 100);
 
   return (
-    <div className="px-4 py-4 pb-32 sm:px-6 lg:px-8 lg:pb-4">
+    <div className="px-4 py-4 sm:px-6 lg:px-8 lg:pb-4">
       {showErrorMessage && (
         <ErrorMessage onClose={() => setsShowErrorMessage(false)} />
       )}
@@ -161,10 +199,10 @@ const ProductPage: React.FC = () => {
 
       <BackButton />
 
-      <div className="flex flex-col gap-10 mt-4">
+      <div className="mt-4 flex flex-col gap-10">
         {/* Produto Principal */}
-        <section className="rounded-[36px] border border-slate-200 bg-white p-6 shadow-soft sm:p-8 lg:p-10">
-          <div className="flex flex-col sm:flex-row gap-8">
+        <section className="shadow-soft rounded-[36px] border border-slate-200 bg-white p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-8 sm:flex-row">
             <div className="flex flex-[3] flex-col">
               <div className="flex aspect-square items-center justify-center">
                 <img
@@ -183,7 +221,7 @@ const ProductPage: React.FC = () => {
                     {product.categoria}
                   </p>
                   {parseFloat(averageRating) > 0 ? (
-                    <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 border border-amber-200/60">
+                    <div className="flex items-center gap-1.5 rounded-full border border-amber-200/60 bg-amber-50 px-3 py-1">
                       <span className="text-xs font-bold text-amber-900">
                         {averageRating}
                       </span>
@@ -219,7 +257,7 @@ const ProductPage: React.FC = () => {
                     {product.max_parcelas}x de R$ {parcela.toFixed(2)}
                   </b>
                 </span>
-                <div className="mt-6 hidden space-y-3 lg:block">
+                <div className="mt-6 space-y-3 block">
                   {!isAddedToCart ? (
                     <button
                       className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-4 text-sm font-semibold text-white transition hover:bg-slate-800"
@@ -244,7 +282,7 @@ const ProductPage: React.FC = () => {
         <ProductDescription descricao={product.descricao} />
 
         {/* Seção de Avaliações */}
-        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <section className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-xs sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="mb-1 text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
@@ -254,17 +292,32 @@ const ProductPage: React.FC = () => {
                 Avaliações do Produto
               </h3>
             </div>
-            {user && (
-              <button
-                onClick={() => setShowReviewForm(!showReviewForm)}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-              >
-                {showReviewForm ? "Cancelar Avaliação" : "Escrever Avaliação"}
-              </button>
+
+            {/* Controle de Permissões para Avaliar */}
+            {user && !loadingEligibility && (
+              <div>
+                {hasAlreadyReviewed ? (
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-500">
+                    ✓ Você já avaliou este produto
+                  </span>
+                ) : (
+                  hasPurchased && (
+                    <button
+                      onClick={() => setShowReviewForm(!showReviewForm)}
+                      className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    >
+                      {showReviewForm
+                        ? "Cancelar Avaliação"
+                        : "Escrever Avaliação"}
+                    </button>
+                  )
+                )}
+              </div>
             )}
           </div>
 
-          {showReviewForm && (
+          {/* Renderização do Formulário se Elegível */}
+          {showReviewForm && canReview && (
             <ReviewForm
               newRating={newRating}
               setNewRating={setNewRating}

@@ -81,7 +81,7 @@ const Account: React.FC = () => {
     try {
       const credential = EmailAuthProvider.credential(
         user.email,
-        currentPassword
+        currentPassword,
       );
 
       await reauthenticateWithCredential(user, credential);
@@ -96,7 +96,7 @@ const Account: React.FC = () => {
       console.error("Erro ao mudar senha:", error);
       if (error.code === "auth/requires-recent-login") {
         setPasswordError(
-          "Sua sessão expirou. Por favor, faça login novamente para mudar sua senha."
+          "Sua sessão expirou. Por favor, faça login novamente para mudar sua senha.",
         );
       } else if (
         error.code === "auth/invalid-credential" ||
@@ -105,11 +105,11 @@ const Account: React.FC = () => {
         setPasswordError("Senha atual incorreta.");
       } else if (error.code === "auth/weak-password") {
         setPasswordError(
-          "A nova senha é muito fraca. Ela deve ter pelo menos 6 caracteres."
+          "A nova senha é muito fraca. Ela deve ter pelo menos 6 caracteres.",
         );
       } else {
         setPasswordError(
-          `Erro ao mudar senha: ${error.message || "Tente novamente."}`
+          `Erro ao mudar senha: ${error.message || "Tente novamente."}`,
         );
       }
     } finally {
@@ -135,6 +135,7 @@ const Account: React.FC = () => {
         />
       ) : (
         <>
+          <BackButton />
           <h2>Minha Conta</h2>
           <div className="user-info">
             <p>
@@ -198,7 +199,6 @@ const Account: React.FC = () => {
           </div>
 
           <div className="change-password-section">
-            <BackButton />
             <button onClick={handleLogout} className="logout-button">
               Sair
             </button>

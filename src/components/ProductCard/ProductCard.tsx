@@ -148,11 +148,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
             }`}
             whileTap={{ scale: 0.97 }}
           >
-            <span className="inline-flex items-center gap-1 sm:gap-2">
-              <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-              <span className="truncate">
-                {isProductInCart ? "Ver carrinho" : "Adicionar"}
-              </span>
+            <span className="inline-flex items-center gap-1 sm:gap-2 ">
+              <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4 " />
+              <span>{isProductInCart ? "Ver carrinho" : "Adicionar"}</span>
             </span>
           </motion.button>
         </div>
