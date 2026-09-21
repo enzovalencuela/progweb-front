@@ -36,22 +36,30 @@ const AttentionMessage: React.FC<AttentionMessageProps> = ({
             {message}
           </p>
 
-          <label className="mt-5 flex items-start gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-            <input
-              type="checkbox"
-              id="acknowledge-checkbox"
-              checked={isChecked}
-              onChange={(e) => setIsChecked(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
-            />
-            <span>Estou ciente de que este é um site para estudos.</span>
-          </label>
+          {message ==
+            "Este site é um projeto de estudo e os produtos expostos são fictícios e não estão à venda. Todos os direitos são de seus respectivos proprietários. Aproveite o site!" && (
+            <label className="mt-5 flex items-start gap-3 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+              <input
+                type="checkbox"
+                id="acknowledge-checkbox"
+                checked={isChecked}
+                onChange={(e) => setIsChecked(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+              />
+              <span>Estou ciente de que este é um site para estudos.</span>
+            </label>
+          )}
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <motion.button
               onClick={onClose}
               className="flex min-h-12 items-center justify-center rounded-full bg-slate-900 px-5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 active:scale-[0.98]"
-              disabled={!isChecked}
+              disabled={
+                message ==
+                "Este site é um projeto de estudo e os produtos expostos são fictícios e não estão à venda. Todos os direitos são de seus respectivos proprietários. Aproveite o site!"
+                  ? !isChecked
+                  : false
+              }
               whileTap={{ scale: 0.97 }}
             >
               Fechar
@@ -69,7 +77,7 @@ const AttentionMessage: React.FC<AttentionMessageProps> = ({
         </motion.div>
       </motion.div>
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 };
 

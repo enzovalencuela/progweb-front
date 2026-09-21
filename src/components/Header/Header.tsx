@@ -11,6 +11,7 @@ const navDepartments = [
   { id: "6", name: "Monitores" },
   { id: "7", name: "Realidade VR" },
   { id: "8", name: "Áudio" },
+  { id: "9", name: "Hardware" },
 ];
 
 const Header = () => {

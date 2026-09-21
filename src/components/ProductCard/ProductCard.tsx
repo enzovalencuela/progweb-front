@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingBag, Sparkles, Tag } from "lucide-react";
@@ -19,17 +19,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
   const [showSpanErrorMessage, setShowSpanErrorMessage] = React.useState(false);
   const navigate = useNavigate();
   const { user, addToCart, cart } = useAuth();
-  const { getReviewSummary, fetchReviewsByProduct } = useReview();
+  const { summaryCache } = useReview();
 
   const isProductInCart = cart.some((item) => item.id === product.id);
-  const summary = getReviewSummary(product.id);
 
-  useEffect(() => {
-    // Busca as avaliações do produto para preencher a nota no card caso ainda não esteja em cache
-    if (summary.count === 0) {
-      fetchReviewsByProduct(product.id);
-    }
-  }, [product.id, fetchReviewsByProduct, summary.count]);
+  const totalReviewsCount = summaryCache[product.id]?.count || 0;
+  const averageRating = summaryCache[product.id]?.average ?? 0;
 
   const handleAddToCart = async (selectedProduct: Product) => {
     if (!user) return;
@@ -81,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
 
       <Link
         to={`/product/${product.id}`}
-        className="relative flex aspect-[4/3.4] items-center justify-center overflow-hidden rounded-[18px] bg-gradient-to-br from-slate-50 via-white to-slate-100 sm:aspect-[4/3.45] sm:rounded-[20px]"
+        className="relative flex aspect-[4/3.4] items-center justify-center overflow-hidden rounded-[18px] bg-white sm:aspect-[4/3.45] sm:rounded-[20px]"
       >
         <img
           src={product.img}
@@ -89,7 +84,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
           loading="lazy"
           decoding="async"
           draggable={false}
-          className="max-h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          className="max-h-full w-full object-contain transition duration-300 group-hover:scale-105"
         />
       </Link>
 
@@ -99,16 +94,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, sectionTitle }) => {
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-xs sm:tracking-[0.18em]">
               {product.categoria}
             </p>
-            {summary.average > 0 && (
-              <div className="flex items-center gap-1 text-slate-700">
-                <span className="text-[11px] font-bold sm:text-xs">
-                  {summary.average.toFixed(1)}
+            {averageRating > 0 ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-0.5">
+                <span className="text-xs font-bold text-slate-400">
+                  {averageRating.toFixed(1)}
                 </span>
                 <FontAwesomeIcon
                   icon={faStar}
-                  className="h-3 w-3 text-amber-400 sm:h-3.5 sm:w-3.5"
+                  className="h-3 w-3 text-amber-400"
                 />
+                <span className="text-[10px] text-slate-400">
+                  ({totalReviewsCount})
+                </span>
               </div>
+            ) : (
+              <span className="text-[10px] font-bold text-slate-400">
+                Sem avaliações
+              </span>
             )}
           </div>
 

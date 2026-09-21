@@ -45,6 +45,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
     cores: "",
     disponivel: true,
     estoque: 0,
+    peso_kg: 0.5,
+    largura_cm: 20,
+    altura_cm: 10,
+    comprimento_cm: 20,
   });
 
   useEffect(() => {
@@ -62,6 +66,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
         cores: product.cores?.join(", ") || "",
         disponivel: product.disponivel,
         estoque: product.estoque || 0,
+        peso_kg: product.peso_kg || 0.5,
+        largura_cm: product.largura_cm || 20,
+        altura_cm: product.altura_cm || 10,
+        comprimento_cm: product.comprimento_cm || 20,
       });
     }
   }, [product]);
@@ -114,7 +122,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       tags: formData.tags.split(",").map((tag) => tag.trim()),
       cores: formData.cores.split(",").map((cor) => cor.trim()),
       disponivel: formData.disponivel,
-      estoque: formData.estoque,
+      estoque: parseInt(String(formData.estoque)),
+      peso_kg: parseFloat(String(formData.peso_kg)),
+      largura_cm: parseInt(String(formData.largura_cm)),
+      altura_cm: parseInt(String(formData.altura_cm)),
+      comprimento_cm: parseInt(String(formData.comprimento_cm)),
     };
 
     onSave(newProduct);
@@ -138,6 +150,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </button>
           )}
         </label>
+
         <label>
           Estoque:
           <input
@@ -147,12 +160,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
             onChange={handleChange}
             required
           />
-          {formData.estoque && (
-            <button type="button" onClick={() => handleClear("estoque")}>
-              X
-            </button>
-          )}
         </label>
+
         <div className="div-row-label">
           <label>
             Preço: (R$)
@@ -188,6 +197,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             />
           </label>
         </div>
+
         {formData.preco_original > formData.preco && (
           <label>
             Desconto: (%)
@@ -212,6 +222,55 @@ const ProductForm: React.FC<ProductFormProps> = ({
             />
           </label>
         )}
+
+        {/* SESSÃO DE DIMENSÕES E PESO PARA FRETE */}
+        <div className="div-row-label">
+          <label>
+            Peso (kg):
+            <input
+              type="number"
+              name="peso_kg"
+              value={formData.peso_kg}
+              onChange={handleChange}
+              step="0.001"
+              required
+            />
+          </label>
+          <label>
+            Comprimento (cm):
+            <input
+              type="number"
+              name="comprimento_cm"
+              value={formData.comprimento_cm}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+
+        <div className="div-row-label">
+          <label>
+            Largura (cm):
+            <input
+              type="number"
+              name="largura_cm"
+              value={formData.largura_cm}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Altura (cm):
+            <input
+              type="number"
+              name="altura_cm"
+              value={formData.altura_cm}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        </div>
+
         <div className="div-row-label">
           <label>
             Max. de parcelas:
@@ -232,11 +291,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
             />
           </label>
         </div>
+
         <label>
           Parcelas:
           <br />
           {parcela} = {valor_total.toFixed(2).replace(".", ",")}
         </label>
+
         <label>
           URL da Imagem:
           <input
@@ -253,6 +314,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
           )}
         </label>
         {formData.img && <img src={formData.img} alt="" />}
+
         <label>
           Descrição:
           <textarea
@@ -267,6 +329,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </button>
           )}
         </label>
+
         <label>
           Cores (separadas por vírgula):
           <input
@@ -281,6 +344,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </button>
           )}
         </label>
+
         <label>
           Tags (separadas por vírgula):
           <input
@@ -295,6 +359,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </button>
           )}
         </label>
+
         <label>
           Categoria:
           <select
@@ -311,6 +376,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             ))}
           </select>
         </label>
+
         <label className="checkbox">
           Disponível:
           <input
@@ -320,6 +386,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             onChange={handleChange}
           />
         </label>
+
         <div className="form-buttons">
           <button type="submit">
             {product ? "Salvar Alterações" : "Adicionar Produto"}
