@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 export interface Review {
   id: number;
   productId: number;
+  userId: number;
   userName: string;
   rating: number;
   comment: string;
@@ -40,8 +42,14 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateSummary = (productId: number, reviews: Review[]) => {
     const count = reviews.length;
-    const average =
-      count > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / count : 0;
+
+    // Trata tanto 'rating' quanto 'nota' (convertendo para número)
+    const totalPoints = reviews.reduce((acc, r: any) => {
+      const score = Number(r.rating ?? r.nota ?? 0);
+      return acc + (isNaN(score) ? 0 : score);
+    }, 0);
+
+    const average = count > 0 ? totalPoints / count : 0;
 
     setSummaryCache((prev) => ({
       ...prev,

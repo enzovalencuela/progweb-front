@@ -1,13 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  LayoutDashboard,
-  LogOut,
-  Package,
-  User,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, LogOut, Package, User, X } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
 interface MenuProps {
@@ -47,7 +41,7 @@ export default function Menu({ onClose }: MenuProps) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-end justify-end bg-slate-950/20 backdrop-blur-sm md:items-start"
+        className="fixed inset-0 z-50 flex items-start justify-end p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -55,33 +49,34 @@ export default function Menu({ onClose }: MenuProps) {
       >
         <motion.div
           ref={panelRef}
-          initial={{ y: 36, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 36, opacity: 0 }}
-          transition={{ duration: 0.24, ease: "easeOut" }}
-          className="w-full rounded-t-[28px] bg-white px-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)] pt-5 shadow-2xl md:mt-4 md:w-full md:max-w-xs md:rounded-[28px] md:border md:border-slate-200 md:p-5"
+          initial={{ opacity: 0, scale: 0.95, y: -10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: -10 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="w-full max-w-xs rounded-[24px] border border-slate-200 bg-white p-5 shadow-2xl mt-12 md:mt-14"
           onClick={(event) => event.stopPropagation()}
         >
           <div className="mb-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-slate-900">Sua área</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-xs text-slate-500">
                 Acesse conta, pedidos e gestão.
               </p>
             </div>
             <button
-              className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-slate-200 text-slate-500 active:scale-[0.98] active:bg-slate-100"
+              className="flex min-h-9 min-w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition active:scale-[0.98] active:bg-slate-100"
               onClick={onClose}
             >
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="space-y-2">
+
+          <div className="space-y-1.5">
             {userAdmin && (
               <Link
                 to="/dashboard"
                 onClick={onClose}
-                className="flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98] active:bg-slate-100"
+                className="flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98]"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 Dashboard
@@ -90,7 +85,7 @@ export default function Menu({ onClose }: MenuProps) {
             <Link
               to="/account"
               onClick={onClose}
-              className="flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98] active:bg-slate-100"
+              className="flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98]"
             >
               <User className="h-4 w-4" />
               Minha Conta
@@ -98,14 +93,14 @@ export default function Menu({ onClose }: MenuProps) {
             <Link
               to="/minhas-compras"
               onClick={onClose}
-              className="flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98] active:bg-slate-100"
+              className="flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 active:scale-[0.98]"
             >
               <Package className="h-4 w-4" />
               Minhas Compras
             </Link>
             <button
               onClick={handleLogout}
-              className="mt-2 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.98]"
+              className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.98]"
             >
               <LogOut className="h-4 w-4" />
               Sair

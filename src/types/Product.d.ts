@@ -12,6 +12,7 @@ export interface Product {
   cores?: string[];
   peso_kg?: number;
   largura_cm?: number;
+  altura_cm?: number;
   comprimento_cm?: number;
   estoque: number;
   createdAt?: string;
